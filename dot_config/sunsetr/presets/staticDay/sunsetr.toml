@@ -1,0 +1,15 @@
+#[Backend]
+backend = "auto"
+transition_mode = "geo" # No time-based transitions
+
+#[Smoothing]
+smoothing = true
+startup_duration = 0.5     # Quick fade-in
+shutdown_duration = 0.5    # Instant shutdown
+adaptive_interval = 1
+
+#[Static configuration]
+static_temp = 6500         # Neutral daylight
+static_gamma = 100         # Full brightness
+latitude = 12.250000
+longitude = 109.183334

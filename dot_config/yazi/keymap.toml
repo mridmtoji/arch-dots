@@ -1,0 +1,4 @@
+[[mgr.prepend_keymap]]
+on = [ "e", "x" ]
+run = 'shell "aunpack $@" --confirm'
+desc = "Extract archive"

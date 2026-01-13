@@ -1,0 +1,18 @@
+#[Backend]
+backend = "auto"
+transition_mode = "finish_by"
+finish_by = "21:00"
+
+#[Temperature & Gamma]
+day_temp = 6500        
+day_gamma = 100
+
+night_temp = 3900    
+night_gamma = 100
+
+#[Smoothing]
+smoothing = true
+startup_duration = 1.0
+shutdown_duration = 1.0
+adaptive_interval = 3
+

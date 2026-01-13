@@ -1,0 +1,13 @@
+#[Backend]
+backend = "auto"
+transition_mode = "static"
+
+#[Smoothing]
+smoothing = true
+startup_duration = 0.5
+shutdown_duration = 0.5
+adaptive_interval = 1
+
+#[Static configuration]
+static_temp = 1000           # Extreme warmth
+static_gamma = 70            # Reduced brightness

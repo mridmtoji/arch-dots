@@ -1,0 +1,5 @@
+
+[Default Applications]
+application/pdf=org.pwmt.zathura.desktop
+x-scheme-handler/terminal=foot.desktop
+x-scheme-handler/discord=vesktop.desktop
