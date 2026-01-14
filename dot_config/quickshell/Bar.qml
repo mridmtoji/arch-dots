@@ -58,7 +58,6 @@ Scope {
                     anchors.fill: parent
                     hoverEnabled: true
                     
-                    onEntered: if (!wallPicker.visible) wallPicker.visible = true
                     onClicked: wallPicker.visible = !wallPicker.visible
                 }
             }

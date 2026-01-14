@@ -46,6 +46,9 @@ PanelWindow {
     property string homeDir: ""
     property string wallpaperDir: ""
     property string cacheDir: ""
+    
+    // Track known wallpapers for incremental updates
+    property var knownPaths: ({})
 
     // Background
     Rectangle {
@@ -103,7 +106,56 @@ PanelWindow {
         }
     }
 
+    // Incremental rescan - only adds new files
+    Process {
+        id: incrementalScanProc
+        running: false
+        command: ["find", root.wallpaperDir, "-type", "f", "(", "-iname", "*.jpg", "-o", "-iname", "*.png", "-o", "-iname", "*.jpeg", "-o", "-iname", "*.webp", "-o", "-iname", "*.mp4", ")"]
+        
+        property var foundPaths: ({})
+        property var toRemove: []
+        
+        onRunningChanged: {
+            if (running) {
+                foundPaths = {}
+                toRemove = []
+            } else {
+                // Remove deleted files
+                for (let i = wallpaperModel.count - 1; i >= 0; i--) {
+                    const path = wallpaperModel.get(i).filePath
+                    if (!foundPaths[path]) {
+                        wallpaperModel.remove(i)
+                        delete root.knownPaths[path]
+                    }
+                }
+            }
+        }
+        
+        stdout: SplitParser {
+            onRead: text => {
+                const path = text.trim()
+                if (path !== "") {
+                    incrementalScanProc.foundPaths[path] = true
+                    // Only add if it's new
+                    if (!root.knownPaths[path]) {
+                        addWallpaper(path)
+                    }
+                }
+            }
+        }
+    }
+
+    // Rescan function - uses incremental scan for speed
+    function rescanWallpapers() {
+        if (root.wallpaperDir !== "" && !incrementalScanProc.running) {
+            incrementalScanProc.running = true
+        }
+    }
+
     function addWallpaper(path) {
+        // Mark as known to avoid duplicates
+        root.knownPaths[path] = true
+        
         const isVideo = path.endsWith(".mp4");
         let thumb = path;
         
@@ -147,7 +199,7 @@ PanelWindow {
     function applyImage(path, mode) {
         const cmd = `
             ln -sf "${path}" ${root.homeDir}/.cache/current_wallpaper;
-            matugen image "${path}" --mode ${mode};
+            matugen -t scheme-rainbow image "${path}" --mode ${mode};
             pkill mpvpaper;
             awww img --transition-duration 1 "${path}";
         `;
@@ -160,6 +212,7 @@ PanelWindow {
     // --- Window Focus Management ---
     onVisibleChanged: {
         if (visible) {
+            rescanWallpapers()
             grid.forceActiveFocus();
             grid.currentIndex = 0;
             root.inputMode = "grid";
