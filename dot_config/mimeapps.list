@@ -1,5 +1,11 @@
-
 [Default Applications]
 application/pdf=org.pwmt.zathura.desktop
 x-scheme-handler/terminal=foot.desktop
 x-scheme-handler/discord=vesktop.desktop
+image/jpeg=swayimg.desktop
+image/png=swayimg.desktop
+image/webp=swayimg.desktop
+image/gif=swayimg.desktop
+image/bmp=swayimg.desktop
+image/tiff=swayimg.desktop
+image/vnd.microsoft.icon=swayimg.desktop

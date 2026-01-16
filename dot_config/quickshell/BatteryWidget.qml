@@ -27,10 +27,10 @@ Item {
     readonly property string chargeIcon: batIcons[10 - chargeIconIndex]
 
     readonly property color batteryColor: {
-        if (batCharging) return ColorTheme.primary
-        if (batPercentage < 0.15) return ColorTheme.error  // Critical
-        if (batPercentage < 0.30) return ColorTheme.secondary  // Low
-        return ColorTheme.primary  // Normal
+        if (batCharging) return (ColorTheme.primary || "#6200EE")
+        if (batPercentage < 0.15) return (ColorTheme.error || "#CF6679")
+        if (batPercentage < 0.30) return (ColorTheme.secondary || "#03DAC6")
+        return (ColorTheme.primary || "#6200EE")
     }
 
     visible: hasBattery
@@ -40,7 +40,7 @@ Item {
         width: Math.min(batteryRow.implicitWidth + 16, 120)
         height: 36
         radius: 8
-        color: ColorTheme.surfaceContainerHigh
+        color: ColorTheme.surfaceContainerHigh || "#2C2C2C"
         clip: true
 
         Row {
@@ -64,7 +64,7 @@ Item {
 
             Text {
                 color: root.batteryColor
-                font.family: ColorTheme.systemFont
+                font.family: ColorTheme.systemFont || "monospace"
                 font.pixelSize: 16
                 font.weight: Font.Medium
                 text: Math.round(batPercentage * 100) + "%"
@@ -83,11 +83,11 @@ Item {
             hoverEnabled: true
 
             onEntered: {
-                batteryRect.color = ColorTheme.primaryContainer
+                batteryRect.color = ColorTheme.primaryContainer || "#424242"
             }
 
             onExited: {
-                batteryRect.color = ColorTheme.surfaceContainerHigh
+                batteryRect.color = ColorTheme.surfaceContainerHigh || "#2C2C2C"
             }
 
             onClicked: {
@@ -111,6 +111,14 @@ Item {
         running: batCharging
         onTriggered: {
             chargeIconIndex = (chargeIconIndex + 1) % 10
+        }
+    }
+
+    // Force refresh when ColorTheme changes
+    Connections {
+        target: ColorTheme
+        function onChanged() {
+            batteryRect.color = ColorTheme.surfaceContainerHigh || "#2C2C2C"
         }
     }
 

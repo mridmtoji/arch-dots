@@ -194,6 +194,8 @@ PanelWindow {
         const cmd = `pkill mpvpaper; mpvpaper -o "no-audio loop" ALL "${path}" & ln -sf "${path}" ${root.homeDir}/.cache/current_wallpaper`;
         applyProc.command = ["sh", "-c", cmd];
         applyProc.running = true;
+        root.visible = false;
+        root.inputMode = "grid";
     }
 
     function applyImage(path, mode) {
@@ -266,6 +268,7 @@ PanelWindow {
                     const item = wallpaperModel.get(grid.currentIndex);
                     if (item.isVideo) {
                         applyVideo(item.filePath);
+                        root.visible = false;
                     } else {
                         root.inputMode = "overlay";
                         root.overlaySelection = "light";
@@ -339,6 +342,7 @@ PanelWindow {
                         grid.currentIndex = index
                         grid.forceActiveFocus()
                         applyVideo(model.filePath)
+                        root.visible = false
                     }
                 }
 

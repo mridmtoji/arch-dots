@@ -8,7 +8,7 @@ Rectangle {
     implicitWidth: contentRow.implicitWidth + 24
     implicitHeight: 36
     radius: 8
-    color: ColorTheme.surfaceContainerHigh
+    color: ColorTheme.surfaceContainerHigh || "#2C2C2C"
 
     property string connectionType: "disconnected" 
     property string ssid: ""
@@ -26,12 +26,12 @@ Rectangle {
     }
 
     readonly property color statusColor: {
-        if (connectionType === "disconnected") return ColorTheme.error
-        if (connectionType === "ethernet") return ColorTheme.tertiaryFixed
+        if (connectionType === "disconnected") return (ColorTheme.error || "#CF6679")
+        if (connectionType === "ethernet") return (ColorTheme.tertiaryFixed || "#00BFA5")
         
-        if (signalStrength >= 50) return ColorTheme.primary
-        if (signalStrength >= 30) return ColorTheme.secondary
-        return ColorTheme.on_error
+        if (signalStrength >= 50) return (ColorTheme.primary || "#6200EE")
+        if (signalStrength >= 30) return (ColorTheme.secondary || "#03DAC6")
+        return (ColorTheme.on_error || "#CF6679")
     }
 
     
@@ -117,14 +117,24 @@ Rectangle {
         hoverEnabled: true
         
         onEntered: {
-            root.color = ColorTheme.primaryContainer
+            root.color = ColorTheme.primaryContainer || "#424242"
             console.log("Current Network: " + root.ssid)
         }
-        onExited: root.color = ColorTheme.surfaceContainerHigh
+        onExited: {
+            root.color = ColorTheme.surfaceContainerHigh || "#2C2C2C"
+        }
         onClicked: nmtuiOpen.running = true
     }
 
     Behavior on color { ColorAnimation { duration: 150 } }
+
+    // Force refresh when ColorTheme changes
+    Connections {
+        target: ColorTheme
+        function onChanged() {
+            root.color = ColorTheme.surfaceContainerHigh || "#2C2C2C"
+        }
+    }
 
     Process {
         id: nmtuiOpen
