@@ -29,6 +29,18 @@ vim.keymap.set("n", "<C-c>", ":nohl<CR>", { desc = "Clear search highlight", sil
 
 vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 
+vim.keymap.set("n", "ss", ":split<CR>", opts)
+vim.keymap.set("n", "sv", ":vsplit<CR>", opts)
+
+vim.keymap.set("n", "sh", "<C-w>h", opts)
+vim.keymap.set("n", "sk", "<C-w>k", opts)
+vim.keymap.set("n", "sj", "<C-w>j", opts)
+vim.keymap.set("n", "sl", "<C-w>l", opts)
+
+vim.keymap.set("n", "<Up>", ":resize -2<CR>", opts)
+vim.keymap.set("n", "<Down>", ":resize +2<CR>", opts)
+vim.keymap.set("n", "<Left>", ":vertical resize -2<CR>", opts)
+vim.keymap.set("n", "<Right>", ":vertical resize +2<CR>", opts)
 
 vim.keymap.set("n", "<leader>fp", function()
     local filePath = vim.fn.expand("%:~")

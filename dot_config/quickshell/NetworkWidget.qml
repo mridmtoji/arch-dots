@@ -8,7 +8,11 @@ Rectangle {
     implicitWidth: contentRow.implicitWidth + 24
     implicitHeight: 36
     radius: 8
-    color: ColorTheme.surfaceContainerHigh || "#2C2C2C"
+    
+    // FIX: Bind color to MouseArea state directly.
+    color: netMouseArea.containsMouse 
+           ? (ColorTheme.primaryContainer || "#424242") 
+           : (ColorTheme.surfaceContainerHigh || "#2C2C2C")
 
     property string connectionType: "disconnected" 
     property string ssid: ""
@@ -33,7 +37,6 @@ Rectangle {
         if (signalStrength >= 30) return (ColorTheme.secondary || "#03DAC6")
         return (ColorTheme.on_error || "#CF6679")
     }
-
     
     Timer {
         interval: 3000
@@ -46,8 +49,6 @@ Rectangle {
     Process {
         id: fetchProc
         
-        // NOTICE: All '$' signs are escaped with '\' (e.g., \$, \${}) 
-        // so QML doesn't try to interpret them.
         command: ["sh", "-c", `
             if nmcli -t -f TYPE,STATE device | grep -q "ethernet:connected"; then
                 echo "ethernet"
@@ -78,10 +79,8 @@ Rectangle {
                     root.connectionType = "wifi";
                     
                     const parts = line.split(":");
-                    // parts[0] is "wifi", parts[1] is signal
                     if (parts.length >= 3) {
                         root.signalStrength = parseInt(parts[1]) || 0;
-                        // Join the rest back in case SSID had a colon
                         root.ssid = parts.slice(2).join(":");
                     }
                 } else {
@@ -108,34 +107,26 @@ Rectangle {
             
             Behavior on color { ColorAnimation { duration: 200 } }
         }
-
     }
 
     // --- Interaction ---
     MouseArea {
+        id: netMouseArea
         anchors.fill: parent
         hoverEnabled: true
         
         onEntered: {
-            root.color = ColorTheme.primaryContainer || "#424242"
+            // Manual color assignment removed to keep binding active
             console.log("Current Network: " + root.ssid)
         }
-        onExited: {
-            root.color = ColorTheme.surfaceContainerHigh || "#2C2C2C"
-        }
+        
         onClicked: nmtuiOpen.running = true
     }
 
     Behavior on color { ColorAnimation { duration: 150 } }
 
-    // Force refresh when ColorTheme changes
-    Connections {
-        target: ColorTheme
-        function onChanged() {
-            root.color = ColorTheme.surfaceContainerHigh || "#2C2C2C"
-        }
-    }
-
+    // REMOVED: The faulty Connections object.
+    
     Process {
         id: nmtuiOpen
         command: ["foot", "-e", "nmtui"]

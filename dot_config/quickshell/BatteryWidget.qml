@@ -40,8 +40,13 @@ Item {
         width: Math.min(batteryRow.implicitWidth + 16, 120)
         height: 36
         radius: 8
-        color: ColorTheme.surfaceContainerHigh || "#2C2C2C"
         clip: true
+        
+        // FIX: Bind color to MouseArea state directly. 
+        // This preserves the link to ColorTheme automatically.
+        color: batMouseArea.containsMouse 
+               ? (ColorTheme.primaryContainer || "#424242") 
+               : (ColorTheme.surfaceContainerHigh || "#2C2C2C")
 
         Row {
             id: batteryRow
@@ -79,16 +84,11 @@ Item {
         }
 
         MouseArea {
+            id: batMouseArea
             anchors.fill: parent
             hoverEnabled: true
 
-            onEntered: {
-                batteryRect.color = ColorTheme.primaryContainer || "#424242"
-            }
-
-            onExited: {
-                batteryRect.color = ColorTheme.surfaceContainerHigh || "#2C2C2C"
-            }
+            // Removed manual color assignments here to preserve bindings
 
             onClicked: {
                 console.log("Battery clicked!")
@@ -114,13 +114,8 @@ Item {
         }
     }
 
-    // Force refresh when ColorTheme changes
-    Connections {
-        target: ColorTheme
-        function onChanged() {
-            batteryRect.color = ColorTheme.surfaceContainerHigh || "#2C2C2C"
-        }
-    }
+    // REMOVED: The faulty Connections object.
+    // The binding on `color` above handles updates automatically.
 
     Component.onCompleted: {
         console.log("BatteryWidget loaded")

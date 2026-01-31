@@ -3,6 +3,14 @@ import Quickshell.Wayland
 import QtQuick
 
 ShellRoot {
-    Bar {}
+    Variants {
+        model: Quickshell.screens
+        
+        Bar {
+            required property var modelData
+            screen: modelData
+        }
+    }
+    
     VolumeOSD {}
 }
